@@ -43,7 +43,7 @@ with my_second_dag as dag:
 
     compute_aggregates = DataProcPySparkOperator(
         task_id="dataproc_compute_aggs",
-        main="gs://europe-west1-training-airfl-d9a9700f-bucket/other/build_statistics.py",
+        main="gs://europe-west1-training-airfl-d9a9700f-bucket/other/build_statistics_simple.py",
         cluster_name=cluster_name,
         arguments=["{{ ds }}"])
 
