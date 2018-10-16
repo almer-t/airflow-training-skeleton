@@ -47,7 +47,7 @@ with my_second_dag as dag:
         cluster_name=cluster_name,
         arguments=["{{ ds }}"])
 
-    dataproc_delete_cluster = DataProcClusterDeleteOperator(
+    dataproc_delete_cluster = DataprocClusterDeleteOperator(
         task_id="dataproc_cluster_spindown",
         cluster_name=cluster_name,
         project_id=project_id,
