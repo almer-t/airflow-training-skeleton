@@ -61,7 +61,7 @@ with my_second_dag as dag:
         source_object="average_prices/transfer_date={{ ds }}/",
         destination_project_dataset_table=table,
         source_format="parquet",
-        write_disposition="OVERWRITE")
+        write_disposition="WRITE_TRUNCATE")
 
     psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
     gcs_to_bq_task.set_upstream(compute_aggregates)
