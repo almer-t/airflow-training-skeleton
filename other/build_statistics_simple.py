@@ -9,7 +9,7 @@ print(dt)
 spark = SparkSession.builder.getOrCreate()
 
 spark.read.json(
-    "gs://europe-west1-training-airfl-d9a9700f-data/data/*.json"
+    "gs://europe-west1-training-airfl-d9a9700f-data/data/{}-*.json".format(dt)
 ).withColumn(
     "transfer_date", col("transfer_date").cast("timestamp").cast("date")
 ).createOrReplaceTempView(
