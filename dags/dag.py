@@ -32,7 +32,7 @@ with my_second_dag as dag:
 
     cluster_name = "my-dataproc-cluster-{{ ds }}"
     project_id = "airflowbolcom-656e0a307aa4039f"
-    zone = "europe-west1"
+    zone = "europe-west4-a"
 
     dataproc_create_cluster = DataprocClusterCreateOperator(
         task_id="dataproc_cluster_spinup",
