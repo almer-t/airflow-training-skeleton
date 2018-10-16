@@ -52,3 +52,5 @@ with my_second_dag as dag:
         cluster_name=cluster_name,
         project_id=project_id,
         trigger_rule=TriggerRule.ALL_DONE)
+
+    psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
