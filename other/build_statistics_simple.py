@@ -64,6 +64,5 @@ aggregation = spark.sql(
 
 (
     aggregation.write.mode("overwrite")
-    .partitionBy("transfer_date")
-    .parquet("gs://europe-west1-training-airfl-d9a9700f-data/average_prices/")
+    .parquet("gs://europe-west1-training-airfl-d9a9700f-data/average_prices/transfer_date={}/".format(dt))
 )
