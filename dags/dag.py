@@ -20,7 +20,7 @@ dag = DAG(
 psql_to_gcs = PostgresToGoogleCloudStorageOperator(
     task_id="read_postgres_data_to_bucket",
     postgres_conn_id="postgres_gcp",
-    sql="select * from gdd.land_registry_price_paid_uk where transfer_date = '{{ ds }}'",
+    sql="select * from land_registry_price_paid_uk where transfer_date = '{{ ds }}'",
     bucket="europe-west1-training-airfl-d9a9700f-data",
     filename="data/{{ ds_nodash }}-psql-land-registry-data.json",
     dag=dag,
