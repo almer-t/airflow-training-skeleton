@@ -58,7 +58,7 @@ with my_second_dag as dag:
     gcs_to_bq_task = GoogleCloudStorageToBigQueryOperator(
         task_id="gcs_to_bq_import",
         bucket="europe-west1-training-airfl-d9a9700f-data",
-        source_objects=["average_prices/transfer_date={{ ds }}/"],
+        source_objects=["average_prices/transfer_date={{ ds }}/*.parquet"],
         destination_project_dataset_table=table,
         source_format="PARQUET",
         write_disposition="WRITE_TRUNCATE")
