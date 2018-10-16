@@ -7,6 +7,7 @@ from airflow.contrib.operators.dataproc_operator import (
     DataprocClusterDeleteOperator,
     DataProcPySparkOperator,
 )
+from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
 
 from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
@@ -53,4 +54,13 @@ with my_second_dag as dag:
         project_id=project_id,
         trigger_rule=TriggerRule.ALL_DONE)
 
+    gcs_to_bq_task = GoogleCloudStorageToBigQueryOperator(
+        task_id="gcs_to_bq_import",
+        bucket="europe-west1-training-airfl-d9a9700f-data",
+        source_object="average_prices/transfer_date={{ ds }}/",
+        destination_project_dataset_table="airflowbolcom-656e0a307aa4039f:airflow_train_a.land_registry_${{ ds_nodash }}",
+        source_format="parquet",
+        write_disposition="OVERWRITE")
+
     psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
+    gcs_to_bq_task.set_upstream(compute_aggregates)
