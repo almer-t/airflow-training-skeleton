@@ -58,7 +58,8 @@ with my_second_dag as dag:
         task_id="gcs_to_bq_import",
         bucket="europe-west1-training-airfl-d9a9700f-data",
         source_object="average_prices/transfer_date={{ ds }}/",
-        destination_project_dataset_table="airflowbolcom-656e0a307aa4039f:airflow_train_a.land_registry_${{ ds_nodash }}",
+        destination_project_dataset_table=\
+        "airflowbolcom-656e0a307aa4039f:airflow_train_a.land_registry_${{ ds_nodash }}",
         source_format="parquet",
         write_disposition="OVERWRITE")
 
