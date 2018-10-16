@@ -60,7 +60,7 @@ with my_second_dag as dag:
         bucket="europe-west1-training-airfl-d9a9700f-data",
         source_objects=["average_prices/transfer_date={{ ds }}/"],
         destination_project_dataset_table=table,
-        source_format="parquet",
+        source_format="PARQUET",
         write_disposition="WRITE_TRUNCATE")
 
     psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
