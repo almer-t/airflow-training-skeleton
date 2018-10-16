@@ -22,6 +22,6 @@ psql_to_gcs = PostgresToGoogleCloudStorageOperator(
     postgres_conn_id="postgres_gcp",
     sql="select * from land_registry_price_paid_uk where transfer_date = '{{ ds }}'",
     bucket="europe-west1-training-airfl-d9a9700f-data",
-    filename="data/{{ ds_nodash }}-psql-land-registry-data.json",
+    filename="data/{{ ds }}-psql-land-registry-data.json",
     dag=dag,
 )
