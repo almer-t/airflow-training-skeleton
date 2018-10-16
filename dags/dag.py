@@ -54,7 +54,7 @@ with my_second_dag as dag:
         project_id=project_id,
         trigger_rule=TriggerRule.ALL_DONE)
 
-    table = "airflowtrain_a.land_registry_${{ ds_nodash }}"
+    table = "airflowtrain_a.{{ ds_nodash }}-land-registry"
     gcs_to_bq_task = GoogleCloudStorageToBigQueryOperator(
         task_id="gcs_to_bq_import",
         bucket="europe-west1-training-airfl-d9a9700f-data",
