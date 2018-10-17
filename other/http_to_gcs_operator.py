@@ -44,7 +44,7 @@ class HttpToGcsOperator(BaseOperator):
 
         # Parse the query into components, extract query part
         parsed = urlparse(self.endpoint)
-        base_url = urlunparse(list(parsed[:4]) + [ "", "" ])
+        base_url = urlunparse(list(parsed[:4]) + ["", ""])
 
         # Create temporary
         with tempfile.NamedTemporaryFile() as fp:

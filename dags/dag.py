@@ -74,9 +74,10 @@ with my_second_dag as dag:
         gcs_path="gs://europe-west1-training-airfl-d9a9700f-data/currencies/{{ ds }}-currencies.json"
     )
 
-    #transform_currency_task = PythonOperator(
-    #    task_id='test', python_callable=transform_currency,
-    #    op_kwargs={'base_dir': base_dir}, dag=dag)
+    #
+    # transform_currency_task = PythonOperator(
+    #     task_id='test', python_callable=transform_currency,
+    #     op_kwargs={'base_dir': base_dir}, dag=dag)
 
     psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
     gcs_to_bq_task.set_upstream(compute_aggregates)
