@@ -3,7 +3,7 @@ from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 
-from urlparse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 import tempfile
 
