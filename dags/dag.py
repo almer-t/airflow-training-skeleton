@@ -67,7 +67,7 @@ with my_second_dag as dag:
 
     for currency in [ "EUR", "USD" ]:
         currency_transform_task = HttpToGcsOperator(
-            task_id="get_currency_" + currency
+            task_id="get_currency_" + currency,
             http_conn_id="http_default",
             endpoint="https://europe-west1-gdd-airflow-training.cloudfunctions.net/airflow-training-transform-valutas?date={{ ds }}&from=GBP&to=EUR",
             gcs_path="gs://europe-west1-training-airfl-d9a9700f-data/currencies/{{ ds }}-currency-{}.json".format(currency)
