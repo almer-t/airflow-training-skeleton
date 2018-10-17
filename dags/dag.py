@@ -32,8 +32,8 @@ my_fifth_dag = DAG(
 
 with my_fifth_dag as dag:
     kubernetes_min_pod = KubernetesPodOperator(
-        task_id="start_pod",
-        name="start_pod",
+        task_id="startpod",
+        name="startpod",
         image="hello-world",
         namespace="default"
     )
