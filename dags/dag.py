@@ -24,7 +24,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 my_fifth_day = DAG(
     dag_id="my_fifth_dag",
     schedule_interval="@daily",
-    default_args: {
+    default_args={
         "owner": "airflow",
         "start_date": airflow.utils.dates.days_ago(1)
     }
