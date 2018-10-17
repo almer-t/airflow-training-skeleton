@@ -3,8 +3,11 @@ import datetime as dt
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 import airflow.utils
-from airflow.operators.python_operator import BranchPythonOperator
-from airflow.operators.dummy_operator import DummyOperator
+
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
+# from airflow.operators.python_operator import BranchPythonOperator
+# from airflow.operators.dummy_operator import DummyOperator
 
 # from airflow.contrib.operators.dataproc_operator import (
 #     DataprocClusterCreateOperator,
@@ -18,32 +21,48 @@ from airflow.operators.dummy_operator import DummyOperator
 
 #from http_to_gcs_operator import HttpToGcsOperator
 
-my_fourth_dag = DAG(
-    dag_id="my_fourth_dag",
+my_fifth_day = DAG(
+    dag_id="my_fifth_dag",
     schedule_interval="@daily",
-    default_args={
+    default_args: {
         "owner": "airflow",
-        "start_date": airflow.utils.dates.days_ago(7),
-    },
+        "start_date": airflow.utils.dates.days_ago(1)
+    }
 )
 
-def get_exec_date(**context):
-    return "day_" + str(context['execution_date'].date().weekday())
-
-with my_fourth_dag as dag:
-
-    branching = BranchPythonOperator(
-        task_id='branching',
-        provide_context=True,
-        python_callable=get_exec_date
+with my_fifth_dag as dag:
+    kubernetes_min_pod = KubernetesPodOperator(
+        task_id="start_pod",
+        name="start_pod",
+        image="hello-world"
     )
 
-    join = DummyOperator(
-        task_id='join',
-        trigger_rule=TriggerRule.ONE_SUCCESS)
+# my_fourth_dag = DAG(
+#     dag_id="my_fourth_dag",
+#     schedule_interval="@daily",
+#     default_args={
+#         "owner": "airflow",
+#         "start_date": airflow.utils.dates.days_ago(7),
+#     },
+# )
 
-    for weekday in range(0, 7):
-        branching >> DummyOperator(task_id="day_{}".format(weekday)) >> join
+# def get_exec_date(**context):
+#     return "day_" + str(context['execution_date'].date().weekday())
+
+# with my_fourth_dag as dag:
+
+#     branching = BranchPythonOperator(
+#         task_id='branching',
+#         provide_context=True,
+#         python_callable=get_exec_date
+#     )
+
+#     join = DummyOperator(
+#         task_id='join',
+#         trigger_rule=TriggerRule.ONE_SUCCESS)
+
+#     for weekday in range(0, 7):
+#         branching >> DummyOperator(task_id="day_{}".format(weekday)) >> join
 
 # my_second_dag = DAG(
 #     dag_id="my_fourth_dag",
