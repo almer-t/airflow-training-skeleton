@@ -39,7 +39,7 @@ with my_second_dag as dag:
         task_id="import_bigquery",
         dataflow_default_options={
             'project': 'airflowbolcom-656e0a307aa4039f',
-            'zone': 'europe-west4',
+            'region': 'europe-west1',
             'bucket': 'europe-west1-training-airfl-d9a9700f-dataflow',
             'input': 'gs://{}/{}'.format('europe-west1-training-airfl-d9a9700f-data', json_output_file),
             'table': 'airflowbolcom-656e0a307aa4039f:airflowtrain_b.{{ ds_nodash }}_full',
