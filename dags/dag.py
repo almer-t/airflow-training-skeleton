@@ -3,6 +3,7 @@ import datetime as dt
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 import airflow.utils
+from airflow.operators.python_operator import BranchPythonOperator
 
 # from airflow.contrib.operators.dataproc_operator import (
 #     DataprocClusterCreateOperator,
