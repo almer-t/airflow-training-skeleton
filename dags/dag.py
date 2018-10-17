@@ -8,6 +8,7 @@ from airflow.contrib.operators.dataproc_operator import (
     DataProcPySparkOperator,
 )
 from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+from airflow.contrib.operators.dataflow_operator import DataFlowPythonOperator
 
 from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
