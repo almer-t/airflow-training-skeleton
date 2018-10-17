@@ -11,6 +11,8 @@ from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOper
 
 from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
+from other.http_to_gcs_operator import HttpToGcsOperator
+
 my_second_dag = DAG(
     dag_id="my_second_dag",
     schedule_interval="30 7 * * *",
@@ -22,6 +24,9 @@ my_second_dag = DAG(
         "email": "atigelaar@bol.com",
     },
 )
+
+def transform_currency():
+    pass
 
 with my_second_dag as dag:
     psql_to_gcs = PostgresToGoogleCloudStorageOperator(
@@ -63,5 +68,16 @@ with my_second_dag as dag:
         source_format="PARQUET",
         write_disposition="WRITE_TRUNCATE")
 
+    currency_transform_task = HttpToGcsOperator(
+        http_conn_id="http_default",
+        endpoint="https://europe-west1-gdd-airflow-training.cloudfunctions.net/airflow-training-transform-valutas?date={{ ds }}&from=GBP&to=EUR",
+        gcs_path="gs://europe-west1-training-airfl-d9a9700f-data/currencies/{{ ds }}-currencies.json"
+    )
+
+    #transform_currency_task = PythonOperator(
+    #    task_id='test', python_callable=transform_currency,
+    #    op_kwargs={'base_dir': base_dir}, dag=dag)
+
     psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
     gcs_to_bq_task.set_upstream(compute_aggregates)
+    compute_aggregates >> currency_transform_task
