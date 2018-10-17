@@ -27,10 +27,15 @@ my_fourth_dag = DAG(
     },
 )
 
+def get_exec_date(**context):
+    return context['execution_date'].get_weekday()
+
 with my_fourth_dag as dag:
+
     branching = BranchPythonOperator(
         task_id='branching',
-        python_callable=lambda: "day_{{ ds.get_weekday() }}"
+        provide_context=True,
+        python_callable=get_exec_date
     )
 
     join = DummyOperator(
