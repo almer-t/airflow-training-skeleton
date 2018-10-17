@@ -2,52 +2,76 @@ import datetime as dt
 
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
-from airflow.contrib.operators.dataproc_operator import (
-    DataprocClusterCreateOperator,
-    DataprocClusterDeleteOperator,
-    DataProcPySparkOperator,
-)
-from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
-from airflow.contrib.operators.dataflow_operator import DataFlowPythonOperator
+import airflow.utils
 
-from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
+# from airflow.contrib.operators.dataproc_operator import (
+#     DataprocClusterCreateOperator,
+#     DataprocClusterDeleteOperator,
+#     DataProcPySparkOperator,
+# )
+# from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+# from airflow.contrib.operators.dataflow_operator import DataFlowPythonOperator
+
+# from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
 from http_to_gcs_operator import HttpToGcsOperator
 
-my_second_dag = DAG(
-    dag_id="my_third_dag",
-    schedule_interval="30 7 * * *",
+my_fourth_dag = DAG(
+    dag_id="my_fourth_dag",
+    schedule_interval="@daily",
     default_args={
         "owner": "airflow",
-        "start_date": dt.datetime(2018, 10, 8),
-        "depends_on_past": True,
-        "email_on_failure": False
+        "start_date": airflow.utils.dates.days_ago(7),
     },
 )
 
-with my_second_dag as dag:
-    json_output_file = 'data/{{ ds }}-psql-land-registry-data.json'
+with my_fourth_dag as dag:
+    branching = BranchPythonOperator(
+        task_id='branching',
+        python_callable=lambda: "day_{{ ds.get_weekday() }}"
+    )
 
-    psql_to_gcs = PostgresToGoogleCloudStorageOperator(
-        task_id="read_postgres_data_to_bucket",
-        postgres_conn_id="postgres_gcp",
-        sql="select * from land_registry_price_paid_uk where transfer_date = '{{ ds }}'",
-        bucket="europe-west1-training-airfl-d9a9700f-data",
-        filename=json_output_file)
+    join = DummyOperator(
+        task_id='join',
+        trigger_rule=TriggerRule.ONE_SUCCESS)
 
-    import_into_bigquery = DataFlowPythonOperator(
-        task_id="import_bigquery",
-        dataflow_default_options={
-            'project': 'airflowbolcom-656e0a307aa4039f',
-            'region': 'europe-west1',
-            'bucket': 'europe-west1-training-airfl-d9a9700f-dataflow',
-            'input': 'gs://{}/{}'.format('europe-west1-training-airfl-d9a9700f-data', json_output_file),
-            'table': 'airflowbolcom-656e0a307aa4039f:airflowtrain_b.{{ ds_nodash }}_full',
-            'name': 'df-{{ ds }}-import'
-        },
-        py_file="gs://airflow-training-data/dataflow_job.py")
+    for weekday in range(0, 7):
+        branching >> DummyOperator(task_id="day_{}".format(weekday)) >> join
 
-    psql_to_gcs >> import_into_bigquery
+# my_second_dag = DAG(
+#     dag_id="my_fourth_dag",
+#     schedule_interval="30 7 * * *",
+#     default_args={
+#         "owner": "airflow",
+#         "start_date": dt.datetime(2018, 10, 8),
+#         "depends_on_past": True,
+#         "email_on_failure": False
+#     },
+# )
+
+# with my_second_dag as dag:
+#     json_output_file = 'data/{{ ds }}-psql-land-registry-data.json'
+
+#     psql_to_gcs = PostgresToGoogleCloudStorageOperator(
+#         task_id="read_postgres_data_to_bucket",
+#         postgres_conn_id="postgres_gcp",
+#         sql="select * from land_registry_price_paid_uk where transfer_date = '{{ ds }}'",
+#         bucket="europe-west1-training-airfl-d9a9700f-data",
+#         filename=json_output_file)
+
+#     import_into_bigquery = DataFlowPythonOperator(
+#         task_id="import_bigquery",
+#         dataflow_default_options={
+#             'project': 'airflowbolcom-656e0a307aa4039f',
+#             'region': 'europe-west1',
+#             'bucket': 'europe-west1-training-airfl-d9a9700f-dataflow',
+#             'input': 'gs://{}/{}'.format('europe-west1-training-airfl-d9a9700f-data', json_output_file),
+#             'table': 'airflowbolcom-656e0a307aa4039f:airflowtrain_b.{{ ds_nodash }}_full',
+#             'name': 'df-{{ ds }}-import'
+#         },
+#         py_file="gs://airflow-training-data/dataflow_job.py")
+
+#     psql_to_gcs >> import_into_bigquery
 
     # cluster_name = "my-dataproc-cluster-{{ ds }}"
     # project_id = "airflowbolcom-656e0a307aa4039f"
