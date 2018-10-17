@@ -65,6 +65,14 @@ with my_second_dag as dag:
         source_format="PARQUET",
         write_disposition="WRITE_TRUNCATE")
 
+    #
+    # transform_currency_task = PythonOperator(
+    #     task_id='test', python_callable=transform_currency,
+    #     op_kwargs={'base_dir': base_dir}, dag=dag)
+
+    psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
+    gcs_to_bq_task.set_upstream(compute_aggregates)
+
     for currency in [ "EUR", "USD" ]:
         currency_transform_task = HttpToGcsOperator(
             task_id="get_currency_" + currency,
@@ -73,12 +81,4 @@ with my_second_dag as dag:
             endpoint="https://europe-west1-gdd-airflow-training.cloudfunctions.net/airflow-training-transform-valutas?date={{ ds }}&from=GBP&to=EUR",
             gcs_path="gs://europe-west1-training-airfl-d9a9700f-data/currencies/{{ ds }}-currency-" + currency + ".json"
         )
-
-    #
-    # transform_currency_task = PythonOperator(
-    #     task_id='test', python_callable=transform_currency,
-    #     op_kwargs={'base_dir': base_dir}, dag=dag)
-
-    psql_to_gcs >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster
-    gcs_to_bq_task.set_upstream(compute_aggregates)
-    compute_aggregates >> currency_transform_task
+        compute_aggregates >> currency_transform_task
