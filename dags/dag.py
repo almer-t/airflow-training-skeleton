@@ -21,7 +21,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 
 #from http_to_gcs_operator import HttpToGcsOperator
 
-my_fifth_day = DAG(
+my_fifth_dag = DAG(
     dag_id="my_fifth_dag",
     schedule_interval="@daily",
     default_args={
