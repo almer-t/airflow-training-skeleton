@@ -11,7 +11,7 @@ from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOper
 
 from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
-from other.http_to_gcs_operator import HttpToGcsOperator
+from http_to_gcs_operator import HttpToGcsOperator
 
 my_second_dag = DAG(
     dag_id="my_second_dag",
@@ -24,9 +24,6 @@ my_second_dag = DAG(
         "email": "atigelaar@bol.com",
     },
 )
-
-def transform_currency():
-    pass
 
 with my_second_dag as dag:
     psql_to_gcs = PostgresToGoogleCloudStorageOperator(
