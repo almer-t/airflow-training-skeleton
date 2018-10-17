@@ -29,8 +29,8 @@ class HttpToGcsOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  endpoint, gcs_path,
-                 http_conn_id="http_default",
-                 gcs_conn_id="gcs_default"
+                 http_conn_id,
+                 gcs_conn_id,
                  *args, **kwargs):
         super(HttpToGcsOperator, self).__init__(*args, **kwargs)
 
