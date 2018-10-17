@@ -16,7 +16,7 @@ from airflow.operators.dummy_operator import DummyOperator
 
 # from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageOperator
 
-from http_to_gcs_operator import HttpToGcsOperator
+#from http_to_gcs_operator import HttpToGcsOperator
 
 my_fourth_dag = DAG(
     dag_id="my_fourth_dag",
