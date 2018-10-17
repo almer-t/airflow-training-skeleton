@@ -28,7 +28,7 @@ my_fourth_dag = DAG(
 )
 
 def get_exec_date(**context):
-    return context['execution_date'].date().weekday()
+    return "day_" + str(context['execution_date'].date().weekday())
 
 with my_fourth_dag as dag:
 
