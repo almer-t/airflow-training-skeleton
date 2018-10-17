@@ -22,23 +22,27 @@ class HttpToGcsOperator(BaseOperator):
     :type gcs_path: string
     """
 
-    template_fields = ('endpoint')
+    template_fields = ('endpoint', 'gcs_path')
     template_ext = ()
     ui_color = '#f4a460'
 
     @apply_defaults
     def __init__(self,
-                 http_conn_id, endpoint, gcs_path,
+                 endpoint, gcs_path,
+                 http_conn_id="http_default",
+                 gcs_conn_id="gcs_default"
                  *args, **kwargs):
         super(HttpToGcsOperator, self).__init__(*args, **kwargs)
 
-        self.http_hook = HttpHook(http_conn_id, method='GET')
-        self.gcs_hook = GoogleCloudStorageHook()
-
+        self.http_conn_id = http_conn_id
+        self.gcs_conn_id = gcs_conn_id
         self.gcs_path = gcs_path
         self.endpoint = endpoint
 
     def execute(self, context):
+
+        self.http_hook = HttpHook(self.http_conn_id, method='GET')
+        self.gcs_hook = GoogleCloudStorageHook(self.gcs_conn_id)
 
         bucket, blob = self.gcs_hook._parse_gcs_url(self.gcs_path)
 
